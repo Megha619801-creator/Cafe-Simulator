@@ -12,13 +12,11 @@ public class Simulator {
     private final ServicePoint barista = new ServicePoint("Barista", 5.0);
     private final ServicePoint shelf = new ServicePoint("Pickup Shelf", 2.0);
     private final ServicePoint delivery = new ServicePoint("Delivery Window", 4.0);
-    private final ServicePoint vipBarista = new ServicePoint("VIP Barista", 2.5);
 
     private final Random rand = new Random();
 
     private final double meanArrivalInstore = 4.0;
     private final double meanArrivalMobile = 6.0;
-    private final double meanArrivalVIP = 15.0;
 
     public void initialize() {
         // First arrivals for each customer type
@@ -26,8 +24,6 @@ public class Simulator {
                 new Customer("INSTORE", clock), cashier));
         eventList.add(new Event(generateArrivalTime(meanArrivalMobile), Event.ARRIVAL,
                 new Customer("MOBILE", clock), barista));
-        eventList.add(new Event(generateArrivalTime(meanArrivalVIP), Event.ARRIVAL,
-                new Customer("VIP", clock), vipBarista));
     }
 
     public void run(double endTime) {
@@ -69,10 +65,6 @@ public class Simulator {
             double nextArrival = clock + generateArrivalTime(meanArrivalMobile);
             eventList.add(new Event(nextArrival, Event.ARRIVAL,
                     new Customer("MOBILE", nextArrival), barista));
-        } else if (c.getType().equals("VIP")) {
-            double nextArrival = clock + generateArrivalTime(meanArrivalVIP);
-            eventList.add(new Event(nextArrival, Event.ARRIVAL,
-                    new Customer("VIP", nextArrival), vipBarista));
         }
     }
 
@@ -100,9 +92,6 @@ public class Simulator {
             } else {
                 eventList.add(new Event(clock, Event.ARRIVAL, c, delivery));
             }
-        } else if (sp == vipBarista) {
-            // VIP goes directly to shelf (or can end here)
-            eventList.add(new Event(clock, Event.ARRIVAL, c, shelf));
         }
     }
 

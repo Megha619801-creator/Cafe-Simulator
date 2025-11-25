@@ -7,13 +7,11 @@ public class Customer {
     private double arrivalTime;
     private double serviceStartTime;
     private double serviceEndTime;
-    private boolean vip;
 
     public Customer(String type, double arrivalTime) {
         this.id = ++counter;
         this.type = type;
         this.arrivalTime = arrivalTime;
-        this.vip = type.equalsIgnoreCase("VIP");
     }
 
     public int getId() {
@@ -22,10 +20,6 @@ public class Customer {
 
     public String getType() {
         return type;
-    }
-
-    public boolean isVip() {
-        return vip;
     }
 
     public double getArrivalTime() {
@@ -56,8 +50,6 @@ public class Customer {
     public String toString() {
         return "Customer{" +
                 "id=" + id +
-                ", type='" + type + '\'' +
-                (vip ? ", VIP" : "") +
-                '}';
+                ", type='" + type + '\'';
     }
 }
