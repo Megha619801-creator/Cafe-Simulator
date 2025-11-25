@@ -31,6 +31,7 @@ public class Simulator {
                 new Customer("INSTORE", clock.getTime()), cashier));
         eventList.add(new Event(generateArrivalTime(meanArrivalMobile), Event.ARRIVAL,
                 new Customer("MOBILE", clock.getTime()), barista));
+
     }
 
     public void run(double endTime) {
