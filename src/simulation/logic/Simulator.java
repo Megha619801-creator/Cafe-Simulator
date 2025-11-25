@@ -1,11 +1,16 @@
 package simulation.logic;
 
-import simulation.model.*;
+import simulation.model.Clock;
+import simulation.model.Customer;
+import simulation.model.Event;
+import simulation.model.EventList;
+import simulation.model.ServicePoint;
+
 import java.util.Random;
 
 public class Simulator {
     private final EventList eventList = new EventList();
-    private double clock = 0.0;
+    private final Clock clock = Clock.getInstance();
 
     // Service points
     private final ServicePoint cashier = new ServicePoint("Cashier", 3.0);
@@ -21,19 +26,21 @@ public class Simulator {
     private final double meanArrivalVIP = 15.0;
 
     public void initialize() {
+        clock.reset();
+
         // First arrivals for each customer type
         eventList.add(new Event(generateArrivalTime(meanArrivalInstore), Event.ARRIVAL,
-                new Customer("INSTORE", clock), cashier));
+                new Customer("INSTORE", clock.getTime()), cashier));
         eventList.add(new Event(generateArrivalTime(meanArrivalMobile), Event.ARRIVAL,
-                new Customer("MOBILE", clock), barista));
+                new Customer("MOBILE", clock.getTime()), barista));
         eventList.add(new Event(generateArrivalTime(meanArrivalVIP), Event.ARRIVAL,
-                new Customer("VIP", clock), vipBarista));
+                new Customer("VIP", clock.getTime()), vipBarista));
     }
 
     public void run(double endTime) {
-        while (!eventList.isEmpty() && clock < endTime) {
+        while (!eventList.isEmpty() && clock.getTime() < endTime) {
             Event e = eventList.removeNext();
-            clock = e.getTime();
+            clock.setTime(e.getTime());
             handleEvent(e);
         }
     }
@@ -52,25 +59,26 @@ public class Simulator {
 
         if (!sp.isBusy()) {
             sp.setBusy(true);
-            c.setServiceStartTime(clock);
+            double currentTime = clock.getTime();
+            c.setServiceStartTime(currentTime);
             double serviceTime = sp.generateServiceTime();
-            c.setServiceEndTime(clock + serviceTime);
-            eventList.add(new Event(clock + serviceTime, Event.DEPARTURE, c, sp));
+            c.setServiceEndTime(currentTime + serviceTime);
+            eventList.add(new Event(currentTime + serviceTime, Event.DEPARTURE, c, sp));
         } else {
             sp.addCustomer(c);
         }
 
         // Schedule next arrival depending on type
         if (c.getType().equals("INSTORE")) {
-            double nextArrival = clock + generateArrivalTime(meanArrivalInstore);
+            double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalInstore);
             eventList.add(new Event(nextArrival, Event.ARRIVAL,
                     new Customer("INSTORE", nextArrival), cashier));
         } else if (c.getType().equals("MOBILE")) {
-            double nextArrival = clock + generateArrivalTime(meanArrivalMobile);
+            double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalMobile);
             eventList.add(new Event(nextArrival, Event.ARRIVAL,
                     new Customer("MOBILE", nextArrival), barista));
         } else if (c.getType().equals("VIP")) {
-            double nextArrival = clock + generateArrivalTime(meanArrivalVIP);
+            double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalVIP);
             eventList.add(new Event(nextArrival, Event.ARRIVAL,
                     new Customer("VIP", nextArrival), vipBarista));
         }
@@ -83,26 +91,27 @@ public class Simulator {
 
         if (sp.hasWaitingCustomer()) {
             Customer next = sp.getNextCustomer();
-            next.setServiceStartTime(clock);
+            double currentTime = clock.getTime();
+            next.setServiceStartTime(currentTime);
             double serviceTime = sp.generateServiceTime();
-            next.setServiceEndTime(clock + serviceTime);
-            eventList.add(new Event(clock + serviceTime, Event.DEPARTURE, next, sp));
+            next.setServiceEndTime(currentTime + serviceTime);
+            eventList.add(new Event(currentTime + serviceTime, Event.DEPARTURE, next, sp));
         } else {
             sp.setBusy(false);
         }
 
         // Route customers after service
         if (sp == cashier) {
-            eventList.add(new Event(clock, Event.ARRIVAL, c, barista));
+            eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, barista));
         } else if (sp == barista) {
             if (c.getType().equals("INSTORE")) {
-                eventList.add(new Event(clock, Event.ARRIVAL, c, shelf));
+                eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, shelf));
             } else {
-                eventList.add(new Event(clock, Event.ARRIVAL, c, delivery));
+                eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, delivery));
             }
         } else if (sp == vipBarista) {
             // VIP goes directly to shelf (or can end here)
-            eventList.add(new Event(clock, Event.ARRIVAL, c, shelf));
+            eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, shelf));
         }
     }
 

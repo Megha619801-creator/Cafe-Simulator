@@ -3,7 +3,7 @@
 ### 1. Core Architecture and Model
 - [ ] **Introduce global simulation clock**
   - [x] Implement `Clock` as a Singleton (single instance for the whole simulator).
-  - [ ] Replace local time variables in the simulator logic with calls to `Clock`.
+  - [x] Replace local time variables in the simulator logic with calls to `Clock`.
 - [ ] **Refine event-driven engine**
   - [ ] Ensure the main loop follows the three-phase simulation idea (A-, B-, C-phases) from the course material.
   - [ ] Keep event handling (`ARRIVAL`, `DEPARTURE`, routing) clearly separated from UI code.
