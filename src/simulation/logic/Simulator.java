@@ -36,73 +36,93 @@ public class Simulator {
 
     public void run(double endTime) {
         while (!eventList.isEmpty() && clock.getTime() < endTime) {
-            Event e = eventList.removeNext();
-            clock.setTime(e.getTime());
-            handleEvent(e);
+            // A-phase: find time of next event and advance clock
+            Event first = eventList.removeNext();
+            double currentTime = first.getTime();
+            if (currentTime > endTime) {
+                clock.setTime(endTime);
+                break;
+            }
+            clock.setTime(currentTime);
+
+            // B-phase: execute all bound (scheduled) events due at current time
+            handleBEvent(first);
+            while (!eventList.isEmpty() && eventList.peekNext().getTime() == currentTime) {
+                Event nextAtSameTime = eventList.removeNext();
+                handleBEvent(nextAtSameTime);
+            }
+
+            // C-phase: repeatedly start services where conditions are met
+            boolean executed;
+            do {
+                executed = cPhase();
+            } while (executed);
         }
     }
 
-    private void handleEvent(Event e) {
-        switch (e.getType()) {
-            case Event.ARRIVAL -> handleArrival(e);
-            case Event.DEPARTURE -> handleDeparture(e);
-        }
-    }
-
-    private void handleArrival(Event e) {
+    // B-phase: handle scheduled ARRIVAL and DEPARTURE events
+    private void handleBEvent(Event e) {
         Customer c = e.getCustomer();
         ServicePoint sp = e.getTarget();
-        System.out.println(e);
 
-        if (!sp.isBusy()) {
-            sp.setBusy(true);
-            double currentTime = clock.getTime();
-            c.setServiceStartTime(currentTime);
-            double serviceTime = sp.generateServiceTime();
-            c.setServiceEndTime(currentTime + serviceTime);
-            eventList.add(new Event(currentTime + serviceTime, Event.DEPARTURE, c, sp));
-        } else {
+        if (e.getType() == Event.ARRIVAL) {
+            System.out.println(e);
+            // Customer arrives to the queue of a service point
             sp.addCustomer(c);
-        }
 
-        // Schedule next arrival depending on type
-        if (c.getType().equals("INSTORE")) {
-            double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalInstore);
-            eventList.add(new Event(nextArrival, Event.ARRIVAL,
-                    new Customer("INSTORE", nextArrival), cashier));
-        } else if (c.getType().equals("MOBILE")) {
-            double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalMobile);
-            eventList.add(new Event(nextArrival, Event.ARRIVAL,
-                    new Customer("MOBILE", nextArrival), barista));
+            // External arrivals schedule next external arrival
+            if (c.getType().equals("INSTORE")) {
+                double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalInstore);
+                eventList.add(new Event(nextArrival, Event.ARRIVAL,
+                        new Customer("INSTORE", nextArrival), cashier));
+            } else if (c.getType().equals("MOBILE")) {
+                double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalMobile);
+                eventList.add(new Event(nextArrival, Event.ARRIVAL,
+                        new Customer("MOBILE", nextArrival), barista));
+            }
+        } else if (e.getType() == Event.DEPARTURE) {
+            System.out.println(e + " (Wait=" + c.getWaitingTime() + ", Service=" + c.getServiceTime() + ")");
+
+            // Service at this point has finished
+            sp.setBusy(false);
+
+            // Route customers after service by placing them into the next queue
+            if (sp == cashier) {
+                barista.addCustomer(c);
+            } else if (sp == barista) {
+                if (c.getType().equals("INSTORE")) {
+                    shelf.addCustomer(c);
+                } else {
+                    delivery.addCustomer(c);
+                }
+            }
+            // shelf and delivery are terminal points in this simple model
         }
     }
 
-    private void handleDeparture(Event e) {
-        Customer c = e.getCustomer();
-        ServicePoint sp = e.getTarget();
-        System.out.println(e + " (Wait=" + c.getWaitingTime() + ", Service=" + c.getServiceTime() + ")");
+    // C-phase: for each service point, start service if there is a waiting customer
+    // and the point is idle
+    private boolean cPhase() {
+        boolean executed = false;
+        executed |= tryStartService(cashier);
+        executed |= tryStartService(barista);
+        executed |= tryStartService(shelf);
+        executed |= tryStartService(delivery);
+        return executed;
+    }
 
-        if (sp.hasWaitingCustomer()) {
+    private boolean tryStartService(ServicePoint sp) {
+        if (!sp.isBusy() && sp.hasWaitingCustomer()) {
             Customer next = sp.getNextCustomer();
             double currentTime = clock.getTime();
             next.setServiceStartTime(currentTime);
             double serviceTime = sp.generateServiceTime();
             next.setServiceEndTime(currentTime + serviceTime);
+            sp.setBusy(true);
             eventList.add(new Event(currentTime + serviceTime, Event.DEPARTURE, next, sp));
-        } else {
-            sp.setBusy(false);
+            return true;
         }
-
-        // Route customers after service
-        if (sp == cashier) {
-            eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, barista));
-        } else if (sp == barista) {
-            if (c.getType().equals("INSTORE")) {
-                eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, shelf));
-            } else {
-                eventList.add(new Event(clock.getTime(), Event.ARRIVAL, c, delivery));
-            }
-        }
+        return false;
     }
 
     private double generateArrivalTime(double mean) {

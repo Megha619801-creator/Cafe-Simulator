@@ -13,6 +13,10 @@ public class EventList {
         return list.poll();
     }
 
+    public Event peekNext() {
+        return list.peek();
+    }
+
     public boolean isEmpty() {
         return list.isEmpty();
     }
