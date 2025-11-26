@@ -6,6 +6,8 @@ import simulation.model.Event;
 import simulation.model.EventList;
 import simulation.model.ServicePoint;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Simulator {
@@ -22,6 +24,16 @@ public class Simulator {
 
     private final double meanArrivalInstore = 4.0;
     private final double meanArrivalMobile = 6.0;
+
+    private final List<SimulationListener> listeners = new ArrayList<>();
+
+    public Simulator() {
+        listeners.add(new ConsoleSimulationListener());
+    }
+
+    public void addListener(SimulationListener listener) {
+        listeners.add(listener);
+    }
 
     public void initialize() {
         clock.reset();
@@ -66,7 +78,7 @@ public class Simulator {
         ServicePoint sp = e.getTarget();
 
         if (e.getType() == Event.ARRIVAL) {
-            System.out.println(e);
+            notifyArrival(e);
             // Customer arrives to the queue of a service point
             sp.addCustomer(c);
 
@@ -81,7 +93,7 @@ public class Simulator {
                         new Customer("MOBILE", nextArrival), barista));
             }
         } else if (e.getType() == Event.DEPARTURE) {
-            System.out.println(e + " (Wait=" + c.getWaitingTime() + ", Service=" + c.getServiceTime() + ")");
+            notifyDeparture(e, c.getWaitingTime(), c.getServiceTime());
 
             // Service at this point has finished
             sp.setBusy(false);
@@ -89,11 +101,14 @@ public class Simulator {
             // Route customers after service by placing them into the next queue
             if (sp == cashier) {
                 barista.addCustomer(c);
+                notifyRouting(c, sp, barista);
             } else if (sp == barista) {
                 if (c.getType().equals("INSTORE")) {
                     shelf.addCustomer(c);
+                    notifyRouting(c, sp, shelf);
                 } else {
                     delivery.addCustomer(c);
+                    notifyRouting(c, sp, delivery);
                 }
             }
             // shelf and delivery are terminal points in this simple model
@@ -127,5 +142,25 @@ public class Simulator {
 
     private double generateArrivalTime(double mean) {
         return -mean * Math.log(1 - rand.nextDouble());
+    }
+
+    private void notifyArrival(Event event) {
+        for (SimulationListener listener : listeners) {
+            listener.onEvent(event);
+            listener.onArrival(event);
+        }
+    }
+
+    private void notifyDeparture(Event event, double waitTime, double serviceTime) {
+        for (SimulationListener listener : listeners) {
+            listener.onEvent(event);
+            listener.onDeparture(event, waitTime, serviceTime);
+        }
+    }
+
+    private void notifyRouting(Customer customer, ServicePoint from, ServicePoint to) {
+        for (SimulationListener listener : listeners) {
+            listener.onRouting(customer, from, to);
+        }
     }
 }

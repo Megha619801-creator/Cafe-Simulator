@@ -6,7 +6,7 @@
   - [x] Replace local time variables in the simulator logic with calls to `Clock`.
 - [ ] **Refine event-driven engine**
   - [x] Ensure the main loop follows the three-phase simulation idea (A-, B-, C-phases) from the course material.
-  - [ ] Keep event handling (`ARRIVAL`, `DEPARTURE`, routing) clearly separated from UI code.
+  - [x] Keep event handling (`ARRIVAL`, `DEPARTURE`, routing) clearly separated from UI code.
 
 ### 2. Randomness and Distributions
 - [ ] **Integrate `eduni.distributions` library**
