@@ -2,11 +2,14 @@ package simulation.logic;
 
 import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Negexp;
+import eduni.distributions.Uniform;
 import simulation.model.Clock;
 import simulation.model.Customer;
 import simulation.model.Event;
 import simulation.model.EventList;
 import simulation.model.ServicePoint;
+import simulation.random.DeterministicGenerator;
+import simulation.random.PositiveNormalGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +20,9 @@ public class Simulator {
 
     // Service points
     private final ServicePoint cashier = new ServicePoint("Cashier", new Negexp(3.0));
-    private final ServicePoint barista = new ServicePoint("Barista", new Negexp(5.0));
-    private final ServicePoint shelf = new ServicePoint("Pickup Shelf", new Negexp(2.0));
-    private final ServicePoint delivery = new ServicePoint("Delivery Window", new Negexp(4.0));
+    private final ServicePoint barista = new ServicePoint("Barista", new PositiveNormalGenerator(4.5, 1.2));
+    private final ServicePoint shelf = new ServicePoint("Pickup Shelf", new Uniform(1.0, 2.5));
+    private final ServicePoint delivery = new ServicePoint("Delivery Window", new DeterministicGenerator(4.0));
 
     private final double meanArrivalInstore = 4.0;
     private final double meanArrivalMobile = 6.0;
