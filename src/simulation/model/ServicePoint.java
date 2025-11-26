@@ -1,19 +1,19 @@
 package simulation.model;
 
+import eduni.distributions.ContinuousGenerator;
+
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 
 public class ServicePoint {
     private final String name;
     private final Queue<Customer> queue = new LinkedList<>();
     private boolean busy = false;
-    private final Random rand = new Random();
-    private final double meanServiceTime;
+    private final ContinuousGenerator serviceTimeGenerator;
 
-    public ServicePoint(String name, double meanServiceTime) {
+    public ServicePoint(String name, ContinuousGenerator serviceTimeGenerator) {
         this.name = name;
-        this.meanServiceTime = meanServiceTime;
+        this.serviceTimeGenerator = serviceTimeGenerator;
     }
 
     public String getName() {
@@ -37,8 +37,7 @@ public class ServicePoint {
     }
 
     public double generateServiceTime() {
-        // Exponential distribution
-        return -meanServiceTime * Math.log(1 - rand.nextDouble());
+        return serviceTimeGenerator.sample();
     }
 
     public void setBusy(boolean busy) {

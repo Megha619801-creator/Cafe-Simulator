@@ -3,7 +3,7 @@ package simulation.simu.model;
 import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Normal;
 import eduni.distributions.Uniform;
-import simu.framework.*;
+import simulation.simu.framework.*;
 import eduni.distributions.Negexp;
 
 import java.util.Random;

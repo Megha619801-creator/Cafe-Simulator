@@ -1,6 +1,6 @@
 package simulation.simu.model;
 
-import simu.framework.*;
+import simulation.simu.framework.*;
 
 /**
  * Customer in a simulator

@@ -1,7 +1,9 @@
 package simulation.simu.model;
 
 import eduni.distributions.ContinuousGenerator;
-import simu.framework.*;
+import simulation.simu.framework.*;
+import simulation.simu.framework.EventList;
+
 import java.util.LinkedList;
 
 /**

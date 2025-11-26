@@ -1,5 +1,7 @@
 package simulation.logic;
 
+import eduni.distributions.ContinuousGenerator;
+import eduni.distributions.Negexp;
 import simulation.model.Clock;
 import simulation.model.Customer;
 import simulation.model.Event;
@@ -8,22 +10,22 @@ import simulation.model.ServicePoint;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Simulator {
     private final EventList eventList = new EventList();
     private final Clock clock = Clock.getInstance();
 
     // Service points
-    private final ServicePoint cashier = new ServicePoint("Cashier", 3.0);
-    private final ServicePoint barista = new ServicePoint("Barista", 5.0);
-    private final ServicePoint shelf = new ServicePoint("Pickup Shelf", 2.0);
-    private final ServicePoint delivery = new ServicePoint("Delivery Window", 4.0);
-
-    private final Random rand = new Random();
+    private final ServicePoint cashier = new ServicePoint("Cashier", new Negexp(3.0));
+    private final ServicePoint barista = new ServicePoint("Barista", new Negexp(5.0));
+    private final ServicePoint shelf = new ServicePoint("Pickup Shelf", new Negexp(2.0));
+    private final ServicePoint delivery = new ServicePoint("Delivery Window", new Negexp(4.0));
 
     private final double meanArrivalInstore = 4.0;
     private final double meanArrivalMobile = 6.0;
+
+    private final ContinuousGenerator instoreArrivalGenerator = new Negexp(meanArrivalInstore);
+    private final ContinuousGenerator mobileArrivalGenerator = new Negexp(meanArrivalMobile);
 
     private final List<SimulationListener> listeners = new ArrayList<>();
 
@@ -39,10 +41,12 @@ public class Simulator {
         clock.reset();
 
         // First arrivals for each customer type
-        eventList.add(new Event(generateArrivalTime(meanArrivalInstore), Event.ARRIVAL,
-                new Customer("INSTORE", clock.getTime()), cashier));
-        eventList.add(new Event(generateArrivalTime(meanArrivalMobile), Event.ARRIVAL,
-                new Customer("MOBILE", clock.getTime()), barista));
+        double firstInstoreArrival = clock.getTime() + instoreArrivalGenerator.sample();
+        double firstMobileArrival = clock.getTime() + mobileArrivalGenerator.sample();
+        eventList.add(new Event(firstInstoreArrival, Event.ARRIVAL,
+                new Customer("INSTORE", firstInstoreArrival), cashier));
+        eventList.add(new Event(firstMobileArrival, Event.ARRIVAL,
+                new Customer("MOBILE", firstMobileArrival), barista));
 
     }
 
@@ -84,11 +88,11 @@ public class Simulator {
 
             // External arrivals schedule next external arrival
             if (c.getType().equals("INSTORE")) {
-                double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalInstore);
+                double nextArrival = clock.getTime() + instoreArrivalGenerator.sample();
                 eventList.add(new Event(nextArrival, Event.ARRIVAL,
                         new Customer("INSTORE", nextArrival), cashier));
             } else if (c.getType().equals("MOBILE")) {
-                double nextArrival = clock.getTime() + generateArrivalTime(meanArrivalMobile);
+                double nextArrival = clock.getTime() + mobileArrivalGenerator.sample();
                 eventList.add(new Event(nextArrival, Event.ARRIVAL,
                         new Customer("MOBILE", nextArrival), barista));
             }
@@ -138,10 +142,6 @@ public class Simulator {
             return true;
         }
         return false;
-    }
-
-    private double generateArrivalTime(double mean) {
-        return -mean * Math.log(1 - rand.nextDouble());
     }
 
     private void notifyArrival(Event event) {

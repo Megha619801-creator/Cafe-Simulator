@@ -1,6 +1,6 @@
 package simulation.simu.model;
 
-import simu.framework.IEventType;
+import simulation.simu.framework.IEventType;
 
 /**
  * Event types are defined by the requirements of the simulation model
