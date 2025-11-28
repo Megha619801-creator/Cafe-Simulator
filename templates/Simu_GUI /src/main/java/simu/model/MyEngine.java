@@ -8,63 +8,76 @@ import simu.framework.Clock;
 import simu.framework.Engine;
 import simu.framework.Event;
 
-
 public class MyEngine extends Engine {
-	private ArrivalProcess arrivalProcess;
+    private ArrivalProcess instoreArrival;
+    private ArrivalProcess mobileArrival;
 
-	public MyEngine(IControllerMtoV controller){ // NEW
-		super(controller); // NEW
-		
-		servicePoints = new ServicePoint[3];
-	
-		servicePoints[0]=new ServicePoint(new Normal(10,6), eventList, EventType.DEP1);
-		servicePoints[1]=new ServicePoint(new Normal(10,10), eventList, EventType.DEP2);
-		servicePoints[2]=new ServicePoint(new Normal(5,3), eventList, EventType.DEP3);
-		
-		arrivalProcess = new ArrivalProcess(new Negexp(15,5), eventList, EventType.ARR1);
-	}
+    public MyEngine(IControllerMtoV controller) {
+        super(controller);
 
-	@Override
-	protected void initialization() {
-		arrivalProcess.generateNext();	 // First arrival in the system
-	}
+        servicePoints = new ServicePoint[4];
 
-	@Override
-	protected void runEvent(Event t) {  // B phase events
-		Customer a;
+        // 4 Service points
+        servicePoints[0] = new ServicePoint(new Normal(3, 1), eventList, EventType.DEP_CASHIER);
+        servicePoints[1] = new ServicePoint(new Normal(5, 2), eventList, EventType.DEP_BARISTA1);
+        servicePoints[2] = new ServicePoint(new Normal(4, 1.5), eventList, EventType.DEP_BARISTA2);
+        servicePoints[3] = new ServicePoint(new Normal(2, 1), eventList, EventType.DEP_PICKUP);
 
-		switch ((EventType)t.getType()){
-		case ARR1:
-			servicePoints[0].addQueue(new Customer());
-			arrivalProcess.generateNext();
-			controller.visualiseCustomer(); // NEW
-			break;
+        // Arrivals
+        instoreArrival = new ArrivalProcess(new Negexp(10, 2), eventList, EventType.ARRIVAL_INSTORE);
+        mobileArrival = new ArrivalProcess(new Negexp(12, 3), eventList, EventType.ARRIVAL_MOBILE);
+    }
 
-		case DEP1:
-			a = servicePoints[0].removeQueue();
-			 servicePoints[1].addQueue(a);
-			break;
+    @Override
+    protected void initialization() {
+        instoreArrival.generateNext();
+        mobileArrival.generateNext();
+    }
 
-		case DEP2:
-			a = servicePoints[1].removeQueue();
-			servicePoints[2].addQueue(a);
-			break;
+    @Override
+    protected void runEvent(Event t) {
+        Customer c;
+        switch ((EventType) t.getType()) {
+            case ARRIVAL_INSTORE:
+                servicePoints[0].addQueue(new Customer(CustomerType.INSTORE));
+                instoreArrival.generateNext();
+                controller.visualiseCustomer();
+                break;
 
-		case DEP3:
-			a = servicePoints[2].removeQueue();
-			a.setRemovalTime(Clock.getInstance().getTime());
-			a.reportResults();
-			break;
-		}	
-	}
+            case ARRIVAL_MOBILE:
+                servicePoints[1].addQueue(new Customer(CustomerType.MOBILE)); // skip cashier
+                mobileArrival.generateNext();
+                controller.visualiseCustomer();
+                break;
 
-	@Override
-	protected void results() {
-		// OLD text UI
-		//System.out.println("Simulation ended at " + Clock.getInstance().getClock());
-		//System.out.println("Results ... are currently missing");
+            case DEP_CASHIER:
+                c = servicePoints[0].removeQueue();
+                servicePoints[1].addQueue(c);
+                break;
 
-		// NEW GUI
-		controller.showEndTime(Clock.getInstance().getTime());
-	}
+            case DEP_BARISTA1:
+                c = servicePoints[1].removeQueue();
+                if (c.getType() == CustomerType.INSTORE) {
+                    servicePoints[2].addQueue(c);
+                } else {
+                    servicePoints[3].addQueue(c); // mobile skips Barista2
+                }
+                break;
+
+            case DEP_BARISTA2:
+                c = servicePoints[2].removeQueue();
+                servicePoints[3].addQueue(c);
+                break;
+
+            case DEP_PICKUP:
+                c = servicePoints[3].removeQueue();
+                c.reportResults();
+                break;
+        }
+    }
+
+    @Override
+    protected void results() {
+        controller.showEndTime(Clock.getInstance().getTime());
+    }
 }
