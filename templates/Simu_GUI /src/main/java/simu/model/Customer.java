@@ -9,7 +9,8 @@ public class Customer {
     private int id;
     private CustomerType type;
     private static int i = 1;
-    private static long sum = 0;
+    private static double sum = 0;  // changed to double
+    private static int finishedCustomers = 0;  // track finished customers
 
     public Customer(CustomerType type) {
         this.id = i++;
@@ -36,13 +37,18 @@ public class Customer {
     }
 
     public void reportResults() {
+        double serviceTime = removalTime - arrivalTime;
+        if (serviceTime < 0) serviceTime = 0;  // safeguard against negative time
+
+        finishedCustomers++;
+        sum += serviceTime;
+        double mean = sum / finishedCustomers;
+
         Trace.out(Trace.Level.INFO, "\nCustomer " + id + " (" + type + ") ready!");
         Trace.out(Trace.Level.INFO, "Customer " + id + " arrived: " + arrivalTime);
         Trace.out(Trace.Level.INFO, "Customer " + id + " removed: " + removalTime);
-        Trace.out(Trace.Level.INFO, "Customer " + id + " stayed: " + (removalTime - arrivalTime));
+        Trace.out(Trace.Level.INFO, "Customer " + id + " stayed: " + serviceTime);
 
-        sum += (removalTime - arrivalTime);
-        double mean = sum / id;
         System.out.println("Current mean of the customer service times: " + mean);
     }
 }
