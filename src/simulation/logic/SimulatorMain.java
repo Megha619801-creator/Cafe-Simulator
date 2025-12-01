@@ -3,6 +3,7 @@ package simulation.logic;
 import simulation.config.SimulationParameters;
 import simulation.data.FileManager;
 import simulation.statistics.SimulationStatistics;
+import simulation.statistics.StatisticsReporter;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -37,5 +38,6 @@ public class SimulatorMain {
         } catch (IOException e) {
             System.err.println("Failed to write simulation results: " + e.getMessage());
         }
+        StatisticsReporter.printToConsole(statistics);
     }
 }

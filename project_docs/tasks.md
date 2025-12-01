@@ -23,19 +23,19 @@
   - [x] Load these parameters either from a configuration file or later from the GUI.
 - [ ] **Implement `FileManager`**
   - [x] Read configuration data (parameters, scenarios) from a file.
-  - [ ] Write simulation results and statistics (per service point and system-wide) to an output file (e.g., CSV or text).
+  - [x] Write simulation results and statistics (per service point and system-wide) to an output file (e.g., CSV or text).
 
 ### 4. Performance Metrics
 - [ ] **Collect performance variables (per service point)**
-  - [ ] Count arrivals `A`, completed customers `C`, and accumulate busy time `B`.
-  - [ ] Track total simulation time `T` via `Clock`.
+  - [x] Count arrivals `A`, completed customers `C`, and accumulate busy time `B`.
+  - [x] Track total simulation time `T` via `Clock`.
 - [ ] **Compute derived measures (per `1.4_Performance_Variables.md`)**
-  - [ ] Utilization `U = B / T`.
-  - [ ] Throughput `X = C / T`.
-  - [ ] Average service time `S = B / C`.
-  - [ ] Average response time `R = W / C`, where `W` is the sum of individual response times.
-  - [ ] Average number in system `N = W / T`.
-  - [ ] Print or return these values at the end of the simulation.
+  - [x] Utilization `U = B / T`.
+  - [x] Throughput `X = C / T`.
+  - [x] Average service time `S = B / C`.
+  - [x] Average response time `R = W / C`, where `W` is the sum of individual response times.
+  - [x] Average number in system `N = W / T`.
+  - [x] Print or return these values at the end of the simulation.
 
 ### 5. JavaFX User Interface
 - [ ] **Basic UI shell**

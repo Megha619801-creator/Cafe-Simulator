@@ -8,6 +8,7 @@ import simu.framework.ArrivalProcess;
 import simu.framework.Clock;
 import simu.framework.Engine;
 import simu.framework.Event;
+import simu.framework.Trace;
 
 public class MyEngine extends Engine {
     private static final String INSTORE = "INSTORE";
@@ -89,6 +90,20 @@ public class MyEngine extends Engine {
 
     @Override
     protected void results() {
-        controller.showEndTime(Clock.getInstance().getTime());
+        double currentTime = Clock.getInstance().getTime();
+        reportServicePointStats(currentTime);
+        controller.showEndTime(currentTime);
+    }
+
+    private void reportServicePointStats(double currentTime) {
+        for (ServicePoint servicePoint : servicePoints) {
+            servicePoint.finalizeBusyTime(currentTime);
+            Trace.out(Trace.Level.INFO,
+                    String.format("%s -> A=%d, C=%d, B=%.2f",
+                            servicePoint.getEventType(),
+                            servicePoint.getArrivals(),
+                            servicePoint.getCompletions(),
+                            servicePoint.getBusyTime()));
+        }
     }
 }
