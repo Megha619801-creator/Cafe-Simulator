@@ -28,6 +28,9 @@ public class MainApp extends Application implements ISimulatorUI {
     private Button startButton;
     private Button slowButton;
     private Button speedUpButton;
+    private Button pauseButton;
+    private Button resumeButton;
+    private Button stepButton;
     private IVisualisation display;
 
     @Override
@@ -45,8 +48,11 @@ public class MainApp extends Application implements ISimulatorUI {
 
         startButton = new Button("Start simulation");
         startButton.setOnAction(event -> {
+            if (controller.isSimulationRunning()) {
+                return;
+            }
             controller.startSimulation();
-            startButton.setDisable(true);
+            onSimulationStarted();
         });
 
         slowButton = new Button("Slow down");
@@ -54,6 +60,38 @@ public class MainApp extends Application implements ISimulatorUI {
 
         speedUpButton = new Button("Speed up");
         speedUpButton.setOnAction(e -> controller.increaseSpeed());
+
+        pauseButton = new Button("Pause");
+        pauseButton.setDisable(true);
+        pauseButton.setOnAction(e -> {
+            if (!controller.isSimulationRunning()) {
+                return;
+            }
+            controller.pauseSimulation();
+            onSimulationPaused();
+        });
+
+        resumeButton = new Button("Resume");
+        resumeButton.setDisable(true);
+        resumeButton.setOnAction(e -> {
+            if (!controller.isSimulationRunning()) {
+                return;
+            }
+            controller.resumeSimulation();
+            onSimulationResumed();
+        });
+
+        stepButton = new Button("Step");
+        stepButton.setDisable(true);
+        stepButton.setOnAction(e -> {
+            if (!controller.isSimulationRunning()) {
+                controller.startSimulation();
+                onSimulationStarted();
+            }
+            controller.pauseSimulation();
+            controller.stepSimulation();
+            onSimulationPaused();
+        });
 
         time = new TextField("200");
         delay = new TextField("10");
@@ -82,6 +120,9 @@ public class MainApp extends Application implements ISimulatorUI {
         grid.add(startButton, 0, 3);
         grid.add(speedUpButton, 0, 4);
         grid.add(slowButton, 1, 4);
+        grid.add(pauseButton, 0, 5);
+        grid.add(resumeButton, 1, 5);
+        grid.add(stepButton, 0, 6);
 
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(15));
@@ -92,6 +133,8 @@ public class MainApp extends Application implements ISimulatorUI {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Coffee Shop Simulation");
         primaryStage.show();
+
+        onSimulationStopped();
     }
 
     @Override
@@ -108,6 +151,7 @@ public class MainApp extends Application implements ISimulatorUI {
     public void setEndingTime(double time) {
         DecimalFormat formatter = new DecimalFormat("#0.00");
         results.setText(formatter.format(time));
+        onSimulationStopped();
     }
 
     @Override
@@ -117,5 +161,39 @@ public class MainApp extends Application implements ISimulatorUI {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void onSimulationStarted() {
+        startButton.setDisable(true);
+        slowButton.setDisable(false);
+        speedUpButton.setDisable(false);
+        pauseButton.setDisable(false);
+        resumeButton.setDisable(true);
+        stepButton.setDisable(true);
+    }
+
+    private void onSimulationPaused() {
+        pauseButton.setDisable(true);
+        resumeButton.setDisable(false);
+        stepButton.setDisable(false);
+        slowButton.setDisable(false);
+        speedUpButton.setDisable(false);
+    }
+
+    private void onSimulationResumed() {
+        pauseButton.setDisable(false);
+        resumeButton.setDisable(true);
+        stepButton.setDisable(true);
+        slowButton.setDisable(false);
+        speedUpButton.setDisable(false);
+    }
+
+    private void onSimulationStopped() {
+        startButton.setDisable(false);
+        slowButton.setDisable(true);
+        speedUpButton.setDisable(true);
+        pauseButton.setDisable(true);
+        resumeButton.setDisable(true);
+        stepButton.setDisable(true);
     }
 }

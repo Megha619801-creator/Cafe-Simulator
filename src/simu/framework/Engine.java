@@ -12,6 +12,10 @@ public abstract class Engine extends Thread implements IEngine { // NEW DEFINITI
 	protected EventList eventList;
 	protected ServicePoint[] servicePoints;
 	protected IControllerMtoV controller; // NEW
+	private final Object pauseLock = new Object();
+	private boolean paused = false;
+	private boolean stepMode = false;
+	private boolean stepRequested = false;
 
 	public Engine(IControllerMtoV controller) { // NEW
 		this.controller = controller; // NEW
@@ -43,6 +47,7 @@ public abstract class Engine extends Thread implements IEngine { // NEW DEFINITI
 		initialization(); // creating, e.g., the first event
 
 		while (simulate()) {
+			waitIfPaused();
 			delay(); // NEW
 			clock.setTime(currentTime());
 			runBEvents();
@@ -50,6 +55,22 @@ public abstract class Engine extends Thread implements IEngine { // NEW DEFINITI
 		}
 
 		results();
+	}
+
+	private void waitIfPaused() {
+		synchronized (pauseLock) {
+			while ((paused || stepMode) && !stepRequested) {
+				try {
+					pauseLock.wait();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				}
+			}
+			if (stepRequested) {
+				stepRequested = false;
+			}
+		}
 	}
 
 	private void runBEvents() {
@@ -81,6 +102,41 @@ public abstract class Engine extends Thread implements IEngine { // NEW DEFINITI
 			sleep(delay);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void pauseSimulation() {
+		synchronized (pauseLock) {
+			paused = true;
+			pauseLock.notifyAll();
+		}
+	}
+
+	@Override
+	public void resumeSimulation() {
+		synchronized (pauseLock) {
+			paused = false;
+			stepMode = false;
+			stepRequested = false;
+			pauseLock.notifyAll();
+		}
+	}
+
+	@Override
+	public void stepOnce() {
+		synchronized (pauseLock) {
+			paused = true;
+			stepMode = true;
+			stepRequested = true;
+			pauseLock.notifyAll();
+		}
+	}
+
+	@Override
+	public boolean isPaused() {
+		synchronized (pauseLock) {
+			return paused || stepMode;
 		}
 	}
 

@@ -51,15 +51,15 @@
   - [x] Use `Platform.runLater` from the simulation thread to update the Canvas safely.
 - [ ] **Animation controls**
   - [x] Allow slowing down/speeding up the simulation (e.g., via sleep intervals or step size).
-  - [ ] Optionally support step-by-step execution (advance by one event or small time window).
+  - [x] Optionally support step-by-step execution (advance by one event or small time window).
 
 ### 7. Usability and External Behaviour
 - [ ] **Runtime control**
-  - [ ] Start, pause, resume, and stop the simulation from the UI.
-  - [ ] Ensure the simulator runs autonomously once started, but reacts to UI controls.
+  - [x] Start, pause, resume, and stop the simulation from the UI.
+  - [x] Ensure the simulator runs autonomously once started, but reacts to UI controls.
 - [ ] **User-friendly interface**
-  - [ ] Choose readable fonts and colours.
-  - [ ] Keep layout simple and intuitive for non-technical users.
+  - [x] Choose readable fonts and colours.
+  - [x] Keep layout simple and intuitive for non-technical users.
 
 ### 8. Testing and Documentation
 - [ ] **Automated and manual testing**

@@ -6,4 +6,12 @@ public interface IControllerVtoM {
     void increaseSpeed();
 
     void decreaseSpeed();
+
+    void pauseSimulation();
+
+    void resumeSimulation();
+
+    void stepSimulation();
+
+    boolean isSimulationRunning();
 }
