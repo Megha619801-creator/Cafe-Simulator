@@ -1,14 +1,18 @@
 package simu.model;
 
-import simulation.ui.IControllerMtoV;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
+import simulation.model.Customer;
+import simulation.ui.IControllerMtoV;
 import simu.framework.ArrivalProcess;
 import simu.framework.Clock;
 import simu.framework.Engine;
 import simu.framework.Event;
 
 public class MyEngine extends Engine {
+    private static final String INSTORE = "INSTORE";
+    private static final String MOBILE = "MOBILE";
+
     private ArrivalProcess instoreArrival;
     private ArrivalProcess mobileArrival;
 
@@ -40,14 +44,14 @@ public class MyEngine extends Engine {
 
         switch ((EventType) t.getType()) {
             case ARRIVAL_INSTORE:
-                c = new Customer(CustomerType.INSTORE);
+                c = new Customer(INSTORE, Clock.getInstance().getTime());
                 servicePoints[0].addQueue(c);
                 instoreArrival.generateNext();
                 controller.visualiseCustomer(c, 0); // Cashier
                 break;
 
             case ARRIVAL_MOBILE:
-                c = new Customer(CustomerType.MOBILE);
+                c = new Customer(MOBILE, Clock.getInstance().getTime());
                 servicePoints[1].addQueue(c); // skips cashier
                 mobileArrival.generateNext();
                 controller.visualiseCustomer(c, 1); // Barista1
@@ -61,7 +65,7 @@ public class MyEngine extends Engine {
 
             case DEP_BARISTA1:
                 c = servicePoints[1].removeQueue();
-                if (c.getType() == CustomerType.INSTORE) {
+                if (INSTORE.equals(c.getType())) {
                     servicePoints[2].addQueue(c);
                     controller.visualiseCustomer(c, 2); // Barista2
                 } else {
@@ -78,7 +82,6 @@ public class MyEngine extends Engine {
 
             case DEP_PICKUP:
                 c = servicePoints[3].removeQueue();
-                c.reportResults();
                 controller.removeCustomer(c);
                 break;
         }

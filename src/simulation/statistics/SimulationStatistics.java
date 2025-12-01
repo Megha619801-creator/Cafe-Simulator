@@ -17,12 +17,12 @@ public final class SimulationStatistics {
     private final double totalResponseTime;
 
     public SimulationStatistics(double simulationTime,
-                                List<ServicePointStatistics> servicePointStatistics,
-                                int totalArrivals,
-                                int totalDepartures,
-                                double totalServiceTime,
-                                double totalWaitTime,
-                                double totalResponseTime) {
+            List<ServicePointStatistics> servicePointStatistics,
+            int totalArrivals,
+            int totalDepartures,
+            double totalServiceTime,
+            double totalWaitTime,
+            double totalResponseTime) {
         this.simulationTime = simulationTime;
         this.servicePointStatistics = List.copyOf(servicePointStatistics);
         this.totalArrivals = totalArrivals;
@@ -95,4 +95,3 @@ public final class SimulationStatistics {
         return totalResponseTime / simulationTime;
     }
 }
-

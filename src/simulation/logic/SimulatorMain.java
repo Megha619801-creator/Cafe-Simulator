@@ -2,6 +2,7 @@ package simulation.logic;
 
 import simulation.config.SimulationParameters;
 import simulation.data.FileManager;
+import simulation.statistics.SimulationStatistics;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,6 +13,7 @@ public class SimulatorMain {
         Simulator sim = new Simulator(params);
         sim.initialize();
         sim.run();
+        writeResults(sim);
     }
 
     private static SimulationParameters loadParameters() {
@@ -24,5 +26,16 @@ public class SimulatorMain {
             }
         }
         return SimulationParameters.defaults();
+    }
+
+    private static void writeResults(Simulator simulator) {
+        SimulationStatistics statistics = simulator.getStatistics();
+        Path outputPath = Path.of("output", "simulation-results.csv");
+        try {
+            FileManager.writeStatistics(outputPath, statistics);
+            System.out.println("Simulation results written to " + outputPath.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Failed to write simulation results: " + e.getMessage());
+        }
     }
 }

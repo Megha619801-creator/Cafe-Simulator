@@ -4,7 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import simu.model.Customer;
+import simulation.model.Customer;
 
 import java.util.HashMap;
 import java.util.Map;

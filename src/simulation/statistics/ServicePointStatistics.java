@@ -11,9 +11,9 @@ public final class ServicePointStatistics {
     private final double totalServiceTime;
 
     public ServicePointStatistics(String servicePointName,
-                                  int arrivals,
-                                  int completions,
-                                  double totalServiceTime) {
+            int arrivals,
+            int completions,
+            double totalServiceTime) {
         this.servicePointName = servicePointName;
         this.arrivals = arrivals;
         this.completions = completions;
@@ -57,4 +57,3 @@ public final class ServicePointStatistics {
         return totalServiceTime / completions;
     }
 }
-
