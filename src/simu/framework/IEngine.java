@@ -2,7 +2,17 @@ package simu.framework;
 
 /* Controller uses this interface */
 public interface IEngine { // NEW
-	public void setSimulationTime(double time);
-	public void setDelay(long time);
-	public long getDelay();
+	void setSimulationTime(double time);
+
+	void setDelay(long time);
+
+	long getDelay();
+
+	void pauseSimulation();
+
+	void resumeSimulation();
+
+	void stepOnce();
+
+	boolean isPaused();
 }
