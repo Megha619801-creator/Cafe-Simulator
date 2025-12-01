@@ -19,7 +19,7 @@
 
 ### 3. Configurability and External Data
 - [ ] **Make model parameters configurable**
-  - [ ] Define a clear set of input parameters (arrival rates, service-time means, simulation end time, etc.).
+  - [x] Define a clear set of input parameters (arrival rates, service-time means, simulation end time, etc.).
   - [ ] Load these parameters either from a configuration file or later from the GUI.
 - [ ] **Implement `FileManager`**
   - [ ] Read configuration data (parameters, scenarios) from a file.

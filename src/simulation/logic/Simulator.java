@@ -2,6 +2,7 @@ package simulation.logic;
 
 import eduni.distributions.Negexp;
 import eduni.distributions.Uniform;
+import simulation.config.SimulationParameters;
 import simulation.model.Clock;
 import simulation.model.Customer;
 import simulation.model.Event;
@@ -17,24 +18,37 @@ import java.util.List;
 public class Simulator {
     private final EventList eventList = new EventList();
     private final Clock clock = Clock.getInstance();
+    private final SimulationParameters parameters;
 
     // Service points
-    private final ServicePoint cashier = new ServicePoint("Cashier", new Negexp(3.0));
-    private final ServicePoint barista = new ServicePoint("Barista", new PositiveNormalGenerator(4.5, 1.2));
-    private final ServicePoint shelf = new ServicePoint("Pickup Shelf", new Uniform(1.0, 2.5));
-    private final ServicePoint delivery = new ServicePoint("Delivery Window", new DeterministicGenerator(4.0));
+    private final ServicePoint cashier;
+    private final ServicePoint barista;
+    private final ServicePoint shelf;
+    private final ServicePoint delivery;
 
-    private final double meanArrivalInstore = 4.0;
-    private final double meanArrivalMobile = 6.0;
-
-    private final ArrivalProcess instoreArrivalProcess = new ArrivalProcess("INSTORE", cashier,
-            new Negexp(meanArrivalInstore));
-    private final ArrivalProcess mobileArrivalProcess = new ArrivalProcess("MOBILE", barista,
-            new Negexp(meanArrivalMobile));
+    private final ArrivalProcess instoreArrivalProcess;
+    private final ArrivalProcess mobileArrivalProcess;
 
     private final List<SimulationListener> listeners = new ArrayList<>();
 
     public Simulator() {
+        this(SimulationParameters.defaults());
+    }
+
+    public Simulator(SimulationParameters parameters) {
+        this.parameters = parameters;
+        this.cashier = new ServicePoint("Cashier", new Negexp(parameters.getCashierServiceMean()));
+        this.barista = new ServicePoint("Barista",
+                new PositiveNormalGenerator(parameters.getBaristaServiceMean(),
+                        parameters.getBaristaServiceVariance()));
+        this.shelf = new ServicePoint("Pickup Shelf",
+                new Uniform(parameters.getShelfServiceMin(), parameters.getShelfServiceMax()));
+        this.delivery = new ServicePoint("Delivery Window",
+                new DeterministicGenerator(parameters.getDeliveryServiceTime()));
+        this.instoreArrivalProcess = new ArrivalProcess("INSTORE", cashier,
+                new Negexp(parameters.getInstoreArrivalMean()));
+        this.mobileArrivalProcess = new ArrivalProcess("MOBILE", barista,
+                new Negexp(parameters.getMobileArrivalMean()));
         listeners.add(new ConsoleSimulationListener());
     }
 
@@ -75,6 +89,10 @@ public class Simulator {
                 executed = cPhase();
             } while (executed);
         }
+    }
+
+    public void run() {
+        run(parameters.getSimulationDuration());
     }
 
     // B-phase: handle scheduled ARRIVAL and DEPARTURE events
