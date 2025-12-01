@@ -23,11 +23,11 @@
   - [x] Load these parameters either from a configuration file or later from the GUI.
 - [ ] **Implement `FileManager`**
   - [x] Read configuration data (parameters, scenarios) from a file.
-  - [ ] Write simulation results and statistics (per service point and system-wide) to an output file (e.g., CSV or text).
+  - [x] Write simulation results and statistics (per service point and system-wide) to an output file (e.g., CSV or text).
 
 ### 4. Performance Metrics
 - [ ] **Collect performance variables (per service point)**
-  - [ ] Count arrivals `A`, completed customers `C`, and accumulate busy time `B`.
+  - [x] Count arrivals `A`, completed customers `C`, and accumulate busy time `B`.
   - [ ] Track total simulation time `T` via `Clock`.
 - [ ] **Compute derived measures (per `1.4_Performance_Variables.md`)**
   - [ ] Utilization `U = B / T`.
