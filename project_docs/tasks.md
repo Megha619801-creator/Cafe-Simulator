@@ -28,14 +28,14 @@
 ### 4. Performance Metrics
 - [ ] **Collect performance variables (per service point)**
   - [x] Count arrivals `A`, completed customers `C`, and accumulate busy time `B`.
-  - [ ] Track total simulation time `T` via `Clock`.
+  - [x] Track total simulation time `T` via `Clock`.
 - [ ] **Compute derived measures (per `1.4_Performance_Variables.md`)**
-  - [ ] Utilization `U = B / T`.
-  - [ ] Throughput `X = C / T`.
-  - [ ] Average service time `S = B / C`.
-  - [ ] Average response time `R = W / C`, where `W` is the sum of individual response times.
-  - [ ] Average number in system `N = W / T`.
-  - [ ] Print or return these values at the end of the simulation.
+  - [x] Utilization `U = B / T`.
+  - [x] Throughput `X = C / T`.
+  - [x] Average service time `S = B / C`.
+  - [x] Average response time `R = W / C`, where `W` is the sum of individual response times.
+  - [x] Average number in system `N = W / T`.
+  - [x] Print or return these values at the end of the simulation.
 
 ### 5. JavaFX User Interface
 - [ ] **Basic UI shell**

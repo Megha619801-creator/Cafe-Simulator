@@ -1,0 +1,17 @@
+# Simulation Summary
+Metric;Value
+Simulation time;60.000
+Total arrivals;23
+Total departures;14
+Average waiting time;10.757
+Average response time;19.272
+Average service time;8.515
+Throughput;0.233
+Average number in system;4.497
+
+# Service Point Statistics
+Name;Arrivals;Completions;Utilization;Throughput;AvgServiceTime
+Cashier;15;15;0.655;0.250;2.620
+Barista;23;14;0.932;0.233;3.993
+Pickup Shelf;9;9;0.259;0.150;1.725
+Delivery Window;5;5;0.333;0.083;4.000

@@ -81,6 +81,10 @@ public final class SimulationStatistics {
         return totalServiceTime / totalDepartures;
     }
 
+    public double getAverageServiceTime() {
+        return getAverageServiceTimePerCustomer();
+    }
+
     public double getThroughput() {
         if (simulationTime <= 0) {
             return 0.0;
@@ -93,5 +97,12 @@ public final class SimulationStatistics {
             return 0.0;
         }
         return totalResponseTime / simulationTime;
+    }
+
+    public double getSystemUtilization() {
+        if (simulationTime <= 0) {
+            return 0.0;
+        }
+        return totalServiceTime / simulationTime;
     }
 }

@@ -35,14 +35,23 @@ public class Customer {
     }
 
     public double getServiceTime() {
+        if (Double.isNaN(serviceStartTime) || Double.isNaN(serviceEndTime)) {
+            return 0.0;
+        }
         return serviceEndTime - serviceStartTime;
     }
 
     public double getWaitingTime() {
+        if (Double.isNaN(serviceStartTime)) {
+            return 0.0;
+        }
         return serviceStartTime - arrivalTime;
     }
 
     public double getResponseTime() {
+        if (Double.isNaN(serviceEndTime)) {
+            return 0.0;
+        }
         return serviceEndTime - arrivalTime;
     }
 

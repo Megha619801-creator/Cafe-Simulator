@@ -32,11 +32,13 @@ public class ServicePoint {
     }
 
     public Customer removeQueue() {
-        finalizeOngoingService(Clock.getInstance().getTime());
+        double currentTime = Clock.getInstance().getTime();
+        finalizeOngoingService(currentTime);
         reserved = false;
         Customer customer = queue.poll();
         if (customer != null) {
             completions++;
+            customer.setServiceEndTime(currentTime);
         }
         return customer;
     }
@@ -45,6 +47,10 @@ public class ServicePoint {
         if (!queue.isEmpty()) {
             reserved = true;
             lastServiceStart = Clock.getInstance().getTime();
+            if (!queue.isEmpty()) {
+                // peek to avoid removing before scheduling
+                queue.peek().setServiceStartTime(lastServiceStart);
+            }
             double serviceTime = generator.sample();
             eventList.add(new Event(eventTypeScheduled, lastServiceStart + serviceTime));
         }
