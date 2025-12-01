@@ -11,6 +11,8 @@ import simulation.model.ServicePoint;
 import simulation.random.ArrivalProcess;
 import simulation.random.DeterministicGenerator;
 import simulation.random.PositiveNormalGenerator;
+import simulation.statistics.SimulationStatistics;
+import simulation.statistics.StatisticsCollector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class Simulator {
     private final ArrivalProcess mobileArrivalProcess;
 
     private final List<SimulationListener> listeners = new ArrayList<>();
+    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
     public Simulator() {
         this(SimulationParameters.defaults());
@@ -50,6 +53,11 @@ public class Simulator {
         this.mobileArrivalProcess = new ArrivalProcess("MOBILE", barista,
                 new Negexp(parameters.getMobileArrivalMean()));
         listeners.add(new ConsoleSimulationListener());
+        statisticsCollector.registerServicePoint(cashier, false);
+        statisticsCollector.registerServicePoint(barista, false);
+        statisticsCollector.registerServicePoint(shelf, true);
+        statisticsCollector.registerServicePoint(delivery, true);
+        listeners.add(statisticsCollector);
     }
 
     public void addListener(SimulationListener listener) {
@@ -58,6 +66,7 @@ public class Simulator {
 
     public void initialize() {
         clock.reset();
+        statisticsCollector.reset();
 
         // First arrivals for each customer type
         instoreArrivalProcess.scheduleNext(clock.getTime(), eventList);
@@ -176,5 +185,9 @@ public class Simulator {
         for (SimulationListener listener : listeners) {
             listener.onRouting(customer, from, to);
         }
+    }
+
+    public SimulationStatistics getStatistics() {
+        return statisticsCollector.snapshot(clock.getTime());
     }
 }

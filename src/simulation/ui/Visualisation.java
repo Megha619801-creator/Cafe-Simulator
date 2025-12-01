@@ -3,7 +3,7 @@ package simulation.ui;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import simu.model.Customer;
+import simulation.model.Customer;
 
 import java.util.HashMap;
 

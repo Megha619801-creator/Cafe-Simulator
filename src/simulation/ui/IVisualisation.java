@@ -1,6 +1,6 @@
 package simulation.ui;
 
-import simu.model.Customer;
+import simulation.model.Customer;
 
 public interface IVisualisation {
     void clearDisplay();

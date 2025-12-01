@@ -1,6 +1,7 @@
 package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
+import simulation.model.Customer;
 import simu.framework.Clock;
 import simu.framework.Event;
 import simu.framework.EventList;
@@ -37,6 +38,11 @@ public class ServicePoint {
         }
     }
 
-    public boolean isReserved() { return reserved; }
-    public boolean isOnQueue() { return !queue.isEmpty(); }
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public boolean isOnQueue() {
+        return !queue.isEmpty();
+    }
 }

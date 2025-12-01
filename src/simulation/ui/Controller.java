@@ -2,7 +2,7 @@ package simulation.ui;
 
 import javafx.application.Platform;
 import simu.framework.IEngine;
-import simu.model.Customer;
+import simulation.model.Customer;
 import simu.model.MyEngine;
 
 public class Controller implements IControllerVtoM, IControllerMtoV {
