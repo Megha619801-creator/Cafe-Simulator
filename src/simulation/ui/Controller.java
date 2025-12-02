@@ -1,6 +1,7 @@
 package simulation.ui;
 
 import javafx.application.Platform;
+import simu.framework.Clock;
 import simu.framework.IEngine;
 import simulation.model.Customer;
 import simu.model.MyEngine;
@@ -18,6 +19,7 @@ public class Controller implements IControllerVtoM, IControllerMtoV {
         if (engine != null) {
             return;
         }
+        Clock.getInstance().setTime(0); // ensure every run starts from time zero
         engine = new MyEngine(this);
         engine.setSimulationTime(ui.getTime());
         engine.setDelay(ui.getDelay());
