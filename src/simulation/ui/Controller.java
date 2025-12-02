@@ -89,4 +89,13 @@ public class Controller implements IControllerVtoM, IControllerMtoV {
     public boolean isSimulationRunning() {
         return engine != null;
     }
+
+    @Override
+    public void setDelay(long delay) {
+        if (engine == null) {
+            return;
+        }
+        engine.setDelay(Math.max(1, delay));
+        ui.showCurrentDelay(engine.getDelay());
+    }
 }

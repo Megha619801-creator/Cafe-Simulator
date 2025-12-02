@@ -74,11 +74,11 @@
 
 - [ ] **Improve animation controls**
   - [x] Add clearer buttons for speed control and state transitions.
-  - [ ] Consider replacing numeric delay input with a Slider for animation speed.
+  - [x] Consider replacing numeric delay input with a Slider for animation speed.
 
 - [ ] **Input validation**
-  - [ ] Validate numeric input for simulation time and delay.
-  - [ ] Show an Alert window when invalid values are entered.
+  - [x] Validate numeric input for simulation time and delay.
+  - [x] Show an Alert window when invalid values are entered.
   - [ ] Highlight invalid fields with a red border.
 
 - [ ] **Visualisation improvements**

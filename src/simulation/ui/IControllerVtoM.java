@@ -14,4 +14,6 @@ public interface IControllerVtoM {
     void stepSimulation();
 
     boolean isSimulationRunning();
+
+    void setDelay(long delay);
 }
