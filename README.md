@@ -12,7 +12,7 @@ I built a Coffee Simulator in Java that reproduces how customers, baristas, and 
 
 ## What I used (technologies and tools)
 - Language: Java (100%)
-- Build tools: Maven or Gradle (will update later)
+- Build tools: Maven 
 - Testing: JUnit
 - Logging: SLF4J / Logback (or java.util.logging)
 - Data export: CSV output support for metrics and traces
@@ -20,11 +20,11 @@ I built a Coffee Simulator in Java that reproduces how customers, baristas, and 
 
 ---
 
-## What I did (my contributions — plain and professional)
+## What we did (our contributions — plain and professional)
 - Implemented the core discrete-event simulation engine in Java to advance simulated time, manage event queues, and process service events.
 - Created agent models: Customer, Barista, and Machine with configurable behaviors and state.
 - Implemented customer arrival processes and service-time distributions (configurable parameters).
-- Built task scheduling and service logic to handle queuing, service start/end, and interruption/resumption (if applicable).
+- Built task scheduling and service logic to handle queuing, service start/end, and interruption/resumption .
 - Implemented a points/logging system and CSV output for metrics: average wait time, total served, throughput, utilization, and other key indicators.
 - Designed a modular code layout so components (arrival generators, service policies, output handlers) are easy to extend or replace.
 - Wrote unit tests around core simulation components and example scenario runners to validate reproducibility.
