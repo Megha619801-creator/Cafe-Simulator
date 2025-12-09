@@ -1,6 +1,6 @@
 package simulation.integration;
 
-import org.junit.jupiter.apijava.Test;
+import org.junit.jupiter.api.Test;
 import simulation.model.*;
 import simulation.random.DeterministicGenerator;
 import simulation.random.ArrivalProcess;
