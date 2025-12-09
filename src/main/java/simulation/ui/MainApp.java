@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
@@ -40,7 +41,7 @@ public class MainApp extends Application implements ISimulatorUI {
     private static final long MAX_DELAY_MS = 2000;
     private static final String ERROR_BORDER_STYLE = "-fx-border-color: #d32f2f; -fx-border-width: 2;";
     private static final double MIN_WINDOW_WIDTH = 1100;
-    private static final double MIN_WINDOW_HEIGHT = 800;
+    private static final double MIN_WINDOW_HEIGHT = 600;
 
     private IControllerVtoM controller;
     private TextField time;
@@ -302,7 +303,13 @@ public class MainApp extends Application implements ISimulatorUI {
         hBox.getChildren().addAll(leftPane, visualisationContainer);
         HBox.setHgrow(visualisationContainer, Priority.ALWAYS);
 
-        Scene scene = new Scene(hBox);
+        ScrollPane scrollPane = new ScrollPane(hBox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Coffee Shop Simulation");
         primaryStage.setMinWidth(MIN_WINDOW_WIDTH);

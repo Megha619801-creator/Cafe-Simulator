@@ -54,7 +54,7 @@ public class Visualisation extends Canvas implements IVisualisation {
     private final Image pickupIcon;
 
     public Visualisation(int w, int h) {
-        super(Math.max(w, 680), Math.max(h, 320));
+        super(Math.max(w, 680), Math.max(h, 200));
         gc = getGraphicsContext2D();
         for (int i = 0; i < ServiceLane.values().length; i++) {
             laneQueues.add(new ArrayList<>());
