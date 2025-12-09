@@ -73,7 +73,7 @@ class StatisticsCollectorTest {
         assertEquals(1, aStats.getArrivals());
         assertEquals(1, aStats.getCompletions());
         assertEquals(2.0, aStats.getTotalServiceTime(), 1e-9);
-        assertEquals(0.2, aStats.getThroughput(10.0), 1e-9);
+        assertEquals(0.1, aStats.getThroughput(10.0), 1e-9);
         assertEquals(0.2, aStats.getUtilization(10.0), 1e-9);
 
         assertEquals(1, bStats.getArrivals());

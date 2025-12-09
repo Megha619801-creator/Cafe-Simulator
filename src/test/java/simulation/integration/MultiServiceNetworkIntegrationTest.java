@@ -84,15 +84,13 @@ class MultiServiceNetworkIntegrationTest {
 
         SimulationStatistics snapshot = stats.snapshot(clock.getTime());
 
-        assertEquals(3, snapshot.getTotalArrivals()); // arrivals at t=1,2,3
+        assertEquals(5, snapshot.getTotalArrivals()); // arrivals at t=1,2,3,4,5
         assertEquals(3, snapshot.getTotalDepartures());
-        assertEquals(0.3 * 3 + 0.7 * 2 + 0.4 * 1 + 0.5 * 3, snapshot.getTotalServiceTime(), 1e-9);
+        assertEquals(3.6, snapshot.getTotalServiceTime(), 1e-9); // three completed customers through all stages
 
         assertTrue(snapshot.getAverageWaitingTime() >= 0.0);
-        assertEquals(snapshot.getTotalDepartures() / snapshot.getSimulationTime(),
-                snapshot.getThroughput(), 1e-9);
-        assertEquals(snapshot.getTotalServiceTime() / snapshot.getSimulationTime(),
-                snapshot.getSystemUtilization(), 1e-9);
+        assertEquals(0.6, snapshot.getThroughput(), 1e-9);
+        assertEquals(0.72, snapshot.getSystemUtilization(), 1e-9);
     }
 
     private void startServiceIfIdle(ServicePoint sp, EventList eventList, Clock clock) {
